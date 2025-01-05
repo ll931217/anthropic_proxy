@@ -24,7 +24,7 @@ services:
       - "host.docker.internal:host-gateway"
     environment:
       DEFAULT_MODELS: claude-3-5-sonnet-20240620
-      OPENAI_API_BASE_URL: http://app:8000/v1
+      OPENAI_API_BASE_URL: http://anthropic-proxy:8000/v1
       OPENAI_API_KEY: unused
       WEBUI_AUTH: True
     volumes:
@@ -32,6 +32,14 @@ services:
     restart: always
     depends_on:
       - anthropic-proxy
+
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+    command: --interval 300 open-webui
 
 volumes:
   open-webui:
