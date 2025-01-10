@@ -1,29 +1,19 @@
 services:
   anthropic-proxy:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ll931217/anthropic-proxy:latest
     environment:
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
-    ports:
-      - "8000:8000"
     restart: always
 
   open-webui:
     container_name: open-webui
     image: ghcr.io/open-webui/open-webui:main
     ports:
-      - "5000:8080"
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [gpu]
+      - "5151:8080"
     extra_hosts:
       - "host.docker.internal:host-gateway"
     environment:
+      OLLAMA_BASE_URL: http://192.168.1.126:11434
       DEFAULT_MODELS: claude-3-5-sonnet-20240620
       OPENAI_API_BASE_URL: http://anthropic-proxy:8000/v1
       OPENAI_API_KEY: unused
